@@ -1,3 +1,2 @@
 # Python bytecode
-__pycache__
-*.pyc
+__pycache__/
