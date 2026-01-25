@@ -1,18 +1,9 @@
 # config.py
 
-# Eye Aspect Ratio
-EAR_THRESHOLD = 0.22
-EAR_CONSEC_FRAMES = 8
+# Eye closure (eyelid distance in pixels)
+EYE_CLOSED_THRESHOLD = 3.0
+EYE_CLOSED_FRAMES = 15   # ~0.7 sec at ~20 FPS
 
-# Mouth Aspect Ratio
-MAR_THRESHOLD = 0.60
-YAWN_CONSEC_FRAMES = 15
-
-# Smoothing
-SMOOTHING_ALPHA = 0.7
-
-# Fatigue scoring
-EYE_WEIGHT = 0.5
-YAWN_WEIGHT = 0.3
-HEAD_WEIGHT = 0.2
-FATIGUE_THRESHOLD = 0.6
+# Yawn detection
+MAR_THRESHOLD = 0.6
+YAWN_FRAMES = 15
