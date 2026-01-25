@@ -3,9 +3,11 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import winsound
 
 from fatigue_metrics import eye_openness, mouth_aspect_ratio
 from config import *
+from collections import deque
 
 # -------------------------------
 # MediaPipe setup
@@ -24,6 +26,8 @@ cap = cv2.VideoCapture(0)
 eye_closed_frames = 0
 yawn_frames = 0
 status = "ALERT"
+perclos_window = deque(maxlen=60)  # ~3 seconds at 20 FPS
+alarm_on = False
 
 # -------------------------------
 # MAIN LOOP
@@ -59,7 +63,10 @@ while cap.isOpened():
         else:
             eye_closed_frames = 0
 
-        eye_closed = eye_closed_frames >= EYE_CLOSED_FRAMES
+        eye_closed_now = 1 if eye_open < EYE_CLOSED_THRESHOLD else 0
+        perclos_window.append(eye_closed_now)
+
+        perclos = sum(perclos_window) / len(perclos_window)
 
         # -------------------------------
         # YAWN LOGIC
@@ -76,23 +83,33 @@ while cap.isOpened():
         # -------------------------------
         # FINAL STATUS LOGIC
         # -------------------------------
-        if eye_closed or yawn:
+        if perclos > 0.4 or eye_closed_now or yawn:
             status = "DROWSY"
         else:
             status = "ALERT"
+        
+        # -------------------------------
+        # ALARM LOGIC
+        # -------------------------------
+        if status == "DROWSY" and not alarm_on:
+            winsound.Beep(2500, 1000)  # frequency, duration (ms)
+            alarm_on = True
+
+        elif status == "ALERT":
+            alarm_on = False
 
         # -------------------------------
         # DEBUG INFO ON SCREEN
         # -------------------------------
         cv2.putText(frame, f"EyeOpen: {eye_open:.2f}",
-                    (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,0), 2)
+                    (20, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,0), 2)
 
         cv2.putText(frame, f"EyeFrames: {eye_closed_frames}",
                     (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,0), 2)
 
         cv2.putText(frame, f"YawnFrames: {yawn_frames}",
                     (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,0), 2)
-
+        
     # -------------------------------
     # STATUS DISPLAY
     # -------------------------------
