@@ -81,12 +81,17 @@ while cap.isOpened():
         yawn = yawn_frames >= YAWN_FRAMES
 
         # -------------------------------
-        # FINAL STATUS LOGIC
+        # FATIGUE LEVEL LOGIC
         # -------------------------------
-        if perclos > 0.4 or eye_closed_now or yawn:
+        if eye_closed_now or perclos >= DROWSY_PERCLOS:
             status = "DROWSY"
+
+        elif yawn or perclos >= WARNING_PERCLOS:
+            status = "WARNING"
+
         else:
             status = "ALERT"
+
         
         # -------------------------------
         # ALARM LOGIC
@@ -95,7 +100,7 @@ while cap.isOpened():
             winsound.Beep(2500, 1000)  # frequency, duration (ms)
             alarm_on = True
 
-        elif status == "ALERT":
+        elif status != "DROWSY":
             alarm_on = False
 
         # -------------------------------
@@ -113,9 +118,14 @@ while cap.isOpened():
     # -------------------------------
     # STATUS DISPLAY
     # -------------------------------
+    color = (0, 255, 0)
+
+    if status == "WARNING":
+        color = (0, 255, 255)
+    elif status == "DROWSY":
+        color = (0, 0, 255)
     cv2.putText(frame, f"STATUS: {status}",
-                (20, 130), cv2.FONT_HERSHEY_SIMPLEX, 0.9,
-                (0,0,255) if status == "DROWSY" else (0,255,0), 2)
+                (20, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.0, color, 2)
 
     cv2.imshow("Fatigue Detection", frame)
 

@@ -7,3 +7,7 @@ EYE_CLOSED_FRAMES = 15   # ~0.7 sec at ~20 FPS
 # Yawn detection
 MAR_THRESHOLD = 0.6
 YAWN_FRAMES = 15
+
+# Fatigue levels (PERCLOS-based)
+WARNING_PERCLOS = 0.25
+DROWSY_PERCLOS = 0.40
