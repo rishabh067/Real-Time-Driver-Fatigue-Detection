@@ -112,22 +112,22 @@ python main.py
 Make sure a webcam is connected before running.
 
 ### 📂 Project Structure
-├── main.py
-├── fatigue_metrics.py
-├── landmark_utils.py
-├── alert_manager.py
-├── requirements.txt
+├── main.py                                                                                                                                                                                                            
+├── fatigue_metrics.py                                                                                                                                                                                                
+├── landmark_utils.py                                                                                                                                                                                                
+├── alert_manager.py                                                                                                                                                                                                   
+├── requirements.txt                                                                                                                                                                                                   
 └── README.md
 
 ### 🔮 Future Enhancements
-📱 Mobile deployment using React Native
-🧠 ML-based fatigue classification instead of rule-based thresholds
-👤 Personalized fatigue thresholds per driver
+📱 Mobile deployment using React Native                                                                                                                                                                              
+🧠 ML-based fatigue classification instead of rule-based thresholds                                                                                                                                                   
+👤 Personalized fatigue thresholds per driver                                                                                                                                                                        
 🚗 Integration with in-vehicle ADAS systems
 
 ### 📌 Key Takeaways
-- Designed for real-world robustness, not just demo accuracy
-- Focus on performance, stability, and engineering trade-offs
+- Designed for real-world robustness, not just demo accuracy                                                                                                                                                         
+- Focus on performance, stability, and engineering trade-offs                                                                                                                                                         
 - Easily extensible to mobile and embedded platforms
 
 ⭐ If you find this project useful or interesting, feel free to explore the code and experiments.
