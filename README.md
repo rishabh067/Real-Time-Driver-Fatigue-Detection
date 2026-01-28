@@ -112,10 +112,18 @@ python main.py
 Make sure a webcam is connected before running.
 
 ### 📂 Project Structure
-├── main.py                                                                                                                                                                                                            
+├── main.py 
+
+
+├── face_mesh.py
+
+
 ├── fatigue_metrics.py                                                                                                                                                                                                
-├── landmark_utils.py                                                                                                                                                                                                
-├── alert_manager.py                                                                                                                                                                                                   
+├── smoothing.py
+
+
+├── config.py                                                                                                                                                                                                
+├── utils.py                                                                                                                                                                                                   
 ├── requirements.txt                                                                                                                                                                                                   
 └── README.md
 
