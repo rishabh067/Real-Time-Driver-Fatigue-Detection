@@ -1,0 +1,19 @@
+# Core computer vision & landmark detection
+opencv-python>=4.5.0
+mediapipe>=0.8.0
+
+# Numerical computations
+numpy>=1.18.0
+
+# Optional / Utilities (if used in scripts)
+matplotlib>=3.0.0
+scipy>=1.4.0
+
+# For audio alerts (if project triggers sounds)
+playsound>=1.2.2
+
+# For configuration handling (if config.py uses it)
+python-dotenv>=0.20.0
+
+# (Unlikely but sometimes used)
+pandas>=1.0.0
