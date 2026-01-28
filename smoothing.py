@@ -1,5 +1,3 @@
-# smoothing.py
-
 class ExponentialSmoother:
     def __init__(self, alpha):
         self.alpha = alpha

@@ -1,17 +1,15 @@
-# main.py
-
 import cv2
 import mediapipe as mp
 import numpy as np
 import winsound
 
-from fatigue_metrics import eye_openness, mouth_aspect_ratio
+from fatigue_metrics import eye_openness, mouth_aspect_ratio, head_tilt_and_nod
 from config import *
 from collections import deque
 
-# -------------------------------
+
 # MediaPipe setup
-# -------------------------------
+
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(
     refine_landmarks=True,
@@ -20,18 +18,19 @@ face_mesh = mp_face_mesh.FaceMesh(
 
 cap = cv2.VideoCapture(0)
 
-# -------------------------------
-# STATE VARIABLES (CRITICAL)
-# -------------------------------
+# STATE VARIABLES
+
 eye_closed_frames = 0
 yawn_frames = 0
 status = "ALERT"
 perclos_window = deque(maxlen=60)  # ~3 seconds at 20 FPS
 alarm_on = False
+prev_nose_y = None
+nod_counter = 0
 
-# -------------------------------
+
 # MAIN LOOP
-# -------------------------------
+
 while cap.isOpened():
     success, frame = cap.read()
     if not success:
@@ -47,15 +46,27 @@ while cap.isOpened():
             landmarks.append([lm.x * w, lm.y * h])
         landmarks = np.array(landmarks)
 
-        # -------------------------------
-        # DRAW LANDMARK DOTS (DEBUG)
-        # -------------------------------
+        
+        # DRAW LANDMARK DOTS
+        
         for (x, y) in landmarks.astype(int):
             cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
 
-        # -------------------------------
+        
+        # HEAD POSE / NOD DETECTION
+        
+        head_tilt, nod, prev_nose_y = head_tilt_and_nod(landmarks, prev_nose_y)
+
+        if nod:
+            nod_counter += 1
+        else:
+            nod_counter = 0
+
+        head_nod = nod_counter >= NOD_FRAMES
+
+
         # EYE CLOSURE LOGIC
-        # -------------------------------
+        
         eye_open = eye_openness(landmarks)
 
         if eye_open < EYE_CLOSED_THRESHOLD:
@@ -68,9 +79,9 @@ while cap.isOpened():
 
         perclos = sum(perclos_window) / len(perclos_window)
 
-        # -------------------------------
+        
         # YAWN LOGIC
-        # -------------------------------
+        
         mar = mouth_aspect_ratio(landmarks)
 
         if mar > MAR_THRESHOLD:
@@ -80,22 +91,22 @@ while cap.isOpened():
 
         yawn = yawn_frames >= YAWN_FRAMES
 
-        # -------------------------------
+        
         # FATIGUE LEVEL LOGIC
-        # -------------------------------
-        if eye_closed_now or perclos >= DROWSY_PERCLOS:
+        
+        if eye_closed_now or perclos >= DROWSY_PERCLOS or head_nod:
             status = "DROWSY"
 
-        elif yawn or perclos >= WARNING_PERCLOS:
+        elif yawn or perclos >= WARNING_PERCLOS or head_tilt:
             status = "WARNING"
 
         else:
             status = "ALERT"
 
         
-        # -------------------------------
+        
         # ALARM LOGIC
-        # -------------------------------
+        
         if status == "DROWSY" and not alarm_on:
             winsound.Beep(2500, 1000)  # frequency, duration (ms)
             alarm_on = True
@@ -103,9 +114,9 @@ while cap.isOpened():
         elif status != "DROWSY":
             alarm_on = False
 
-        # -------------------------------
+        
         # DEBUG INFO ON SCREEN
-        # -------------------------------
+        
         cv2.putText(frame, f"EyeOpen: {eye_open:.2f}",
                     (20, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,0), 2)
 
@@ -115,9 +126,9 @@ while cap.isOpened():
         cv2.putText(frame, f"YawnFrames: {yawn_frames}",
                     (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,0), 2)
         
-    # -------------------------------
+    
     # STATUS DISPLAY
-    # -------------------------------
+    
     color = (0, 255, 0)
 
     if status == "WARNING":
