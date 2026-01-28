@@ -112,12 +112,14 @@ python main.py
 Make sure a webcam is connected before running.
 
 ### 📂 Project Structure
-├── main.py                                                                                        
-├── face_mesh.py                                                                                 
-├── fatigue_metrics.py                                                                                                                                                                      
-├── smoothing.py                                                                                 
-├── config.py                                                                                                                                                                                                
-├── utils.py                                                                                                                                                                                                   
+fatigue_detection/                                                                                 
+│                                                                                                
+├── main.py               # Entry point (webcam loop)                                                                                     
+├── face_mesh.py          # MediaPipe face landmarks                                                                            
+├── fatigue_metrics.py    # EAR, MAR, head pose                                                                                                                                                     
+├── smoothing.py          # Temporal filters                                                                        
+├── config.py             # Thresholds & constants                                                                                                                                                                                   
+├── utils.py              # Helper functions                                                                                                                                                                                     
 ├── requirements.txt                                                                                                                                                                                                   
 └── README.md
 
