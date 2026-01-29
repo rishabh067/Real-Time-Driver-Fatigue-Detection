@@ -2,6 +2,8 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import winsound
+import csv
+import time
 
 from fatigue_metrics import eye_openness, mouth_aspect_ratio, head_tilt_and_nod
 from config import *
@@ -27,6 +29,20 @@ perclos_window = deque(maxlen=60)  # ~3 seconds at 20 FPS
 alarm_on = False
 prev_nose_y = None
 nod_counter = 0
+
+# Data logging setup
+log_file = open("fatigue_log.csv", "w", newline="")
+csv_writer = csv.writer(log_file)
+
+csv_writer.writerow([
+    "timestamp",
+    "eye_open",
+    "perclos",
+    "mar",
+    "head_tilt",
+    "head_nod",
+    "status"
+])
 
 
 # MAIN LOOP
@@ -103,6 +119,16 @@ while cap.isOpened():
         else:
             status = "ALERT"
 
+        csv_writer.writerow([
+            time.time(),
+            round(eye_open, 2),
+            round(perclos, 2),
+            round(mar, 2),
+            int(head_tilt),
+            int(head_nod),
+            status
+        ])
+
         
         
         # ALARM LOGIC
@@ -143,5 +169,6 @@ while cap.isOpened():
     if cv2.waitKey(1) & 0xFF == 27:
         break
 
+log_file.close()
 cap.release()
 cv2.destroyAllWindows()
